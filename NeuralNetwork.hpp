@@ -17,8 +17,7 @@ template <
 class NeuralNetwork {
   public:
     NeuralNetwork() 
-      : learning_rate(0.01), 
-        nr_epochs(NR_EPOCHS) 
+      : learning_rate(0.1), epochs_elapsed(0), total_epochs(0)
     {
       std::iota(training_set_order, training_set_order + NR_TRAINING_SETS, 0);
       initialize_weights();
@@ -60,31 +59,23 @@ class NeuralNetwork {
         output_layer_bias[i] = get_random_weight();
     }
 
-    void print_network_data(std::size_t i) const {
-      std::cout << "Input: ";
+    void print_network_data(const int i) const {
+      std::cout << "  Input: ";
       for (std::size_t j = 0; j < NR_INPUTS; ++j)
-        std::cout << training_inputs[i][j] << " ";
+         std::cout << training_inputs[i][j] << " ";
       std::cout << '\n';
-
-      std::cout << "Output: ";
+  
+      std::cout << "  Output: ";
       for (std::size_t j = 0; j < NR_OUTPUTS; ++j)
         std::cout << output_layer[j] << " ";
       std::cout << '\n';
-
-      std::cout << "Expected: " ;
+  
+      std::cout << "  Expected: " ;
       for (std::size_t j = 0; j < NR_OUTPUTS; ++j)
         std::cout << training_outputs[i][j] << " ";
+      std::cout << "\n\n";
+  
       std::cout << '\n';
-    }
-
-    void process_epoch() {
-      shuffle_training_set();
-
-      for (const int i : training_set_order) {
-        pass_forward(i);
-        print_network_data(i);
-        propagate_backwards(i);
-      }
     }
 
     void pass_forward(const int i) {
@@ -139,8 +130,25 @@ class NeuralNetwork {
       }
     }
 
-    void train() {
-      for (int epoch = 0; epoch < nr_epochs; ++epoch) 
+    
+    void process_epoch() {
+      shuffle_training_set();
+      
+      if (epochs_elapsed == total_epochs) 
+        std::cout << "Current epoch: " << epochs_elapsed << "\n\n";
+
+      for (const int i : training_set_order) {
+        pass_forward(i);
+        propagate_backwards(i);
+
+        if (epochs_elapsed == total_epochs) 
+          print_network_data(i);
+      }
+    }
+
+    void train(int nr_epochs) {
+      total_epochs = nr_epochs;
+      while (epochs_elapsed++ < total_epochs)
         process_epoch();
     }
 
@@ -156,7 +164,8 @@ class NeuralNetwork {
     double training_outputs[NR_TRAINING_SETS][NR_OUTPUTS];
 
     int training_set_order[NR_TRAINING_SETS];
-    int nr_epochs;
+    int epochs_elapsed;
+    int total_epochs;
 
     double get_random_weight() {
       return static_cast<double>(rand()) / RAND_MAX;
