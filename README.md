@@ -48,7 +48,7 @@ nn.set_training_data(TRAINING_INPUT, TRAINING_OUTPUT)
 nn.train(NR_OF_EPOCHS)
 ```
 
-*I recommend to train it with at least 10000 epochs for accurate results, but you can play around with smaller values to visualise the evolution, at the end of the training the neural network data will printed, showing the input, output and the expected output
+*I recommend to train it with at least 10000 epochs for accurate results, but you can play around with smaller values to visualise the evolution, at the end of the training, the neural network data will be printed, showing the inputs, outputs and the expected outputs
 
 ## 5. Compile and run
    
